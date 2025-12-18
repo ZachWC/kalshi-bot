@@ -12,6 +12,13 @@ interface MarketOrder {
   limit_price?: number
 }
 
+interface OrderResponse {
+  order_id?: string
+  avg_price?: number
+  filled_quantity?: number
+  [key: string]: any
+}
+
 interface KalshiResponse<T = any> {
   data?: T
   error?: {
@@ -88,8 +95,8 @@ export class KalshiAPI {
     return market.yes_ask || 0
   }
 
-  async createMarketOrder(order: MarketOrder) {
-    return this.request('/portfolio/orders', {
+  async createMarketOrder(order: MarketOrder): Promise<OrderResponse> {
+    return this.request<OrderResponse>('/portfolio/orders', {
       method: 'POST',
       body: JSON.stringify({
         market_id: order.market_id,
