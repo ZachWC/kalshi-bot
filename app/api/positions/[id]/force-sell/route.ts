@@ -54,9 +54,15 @@ export async function POST(
         type: 'market',
       })
 
+      if (!sellOrder.avg_price) {
+        throw new Error('Order executed but avg_price is missing')
+      }
+
+      const sellPrice = sellOrder.avg_price
+
       // Calculate P&L
       const profitLoss = position.avg_buy_price
-        ? (sellOrder.avg_price - position.avg_buy_price) * position.shares_owned
+        ? (sellPrice - position.avg_buy_price) * position.shares_owned
         : null
 
       // Record trade
@@ -66,8 +72,8 @@ export async function POST(
         market_id: position.market_id,
         trade_type: 'sell',
         shares: position.shares_owned,
-        price: sellOrder.avg_price,
-        total_amount: sellOrder.avg_price * position.shares_owned,
+        price: sellPrice,
+        total_amount: sellPrice * position.shares_owned,
         profit_loss: profitLoss,
         kalshi_order_id: sellOrder.order_id || null,
       })
@@ -77,7 +83,7 @@ export async function POST(
         .from('positions')
         .update({
           status: 'sold',
-          current_price: sellOrder.avg_price,
+          current_price: sellPrice,
           sold_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         })
@@ -90,7 +96,7 @@ export async function POST(
         action: 'position_sold_manual',
         details: {
           shares: position.shares_owned,
-          price: sellOrder.avg_price,
+          price: sellPrice,
           profit_loss: profitLoss,
         },
       })
