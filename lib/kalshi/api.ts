@@ -19,6 +19,13 @@ interface OrderResponse {
   [key: string]: any
 }
 
+interface MarketResponse {
+  yes_ask?: number
+  no_ask?: number
+  title?: string
+  [key: string]: any
+}
+
 interface KalshiResponse<T = any> {
   data?: T
   error?: {
@@ -80,8 +87,8 @@ export class KalshiAPI {
     return this.request('/portfolio/balance')
   }
 
-  async getMarket(marketId: string) {
-    return this.request(`/markets/${marketId}`)
+  async getMarket(marketId: string): Promise<MarketResponse> {
+    return this.request<MarketResponse>(`/markets/${marketId}`)
   }
 
   async searchMarkets(query: string) {
@@ -92,7 +99,7 @@ export class KalshiAPI {
     const market = await this.getMarket(marketId)
     // Kalshi returns yes_ask and no_ask prices
     // For YES contracts, we use yes_ask
-    return market.yes_ask || 0
+    return market.yes_ask ?? 0
   }
 
   async createMarketOrder(order: MarketOrder): Promise<OrderResponse> {
