@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import type { Trade } from '@/types/trade'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
@@ -9,11 +9,7 @@ export default function HistoryPage() {
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<'all' | 'buy' | 'sell'>('all')
 
-  useEffect(() => {
-    fetchTrades()
-  }, [filter])
-
-  const fetchTrades = async () => {
+  const fetchTrades = useCallback(async () => {
     setLoading(true)
     try {
       const url = filter === 'all' 
@@ -31,7 +27,11 @@ export default function HistoryPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [filter])
+
+  useEffect(() => {
+    fetchTrades()
+  }, [fetchTrades])
 
   const totalPnl = trades
     .filter(t => t.trade_type === 'sell' && t.profit_loss !== null)
