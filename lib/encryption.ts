@@ -1,23 +1,28 @@
 import crypto from 'crypto';
 
-const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
 const ALGORITHM = 'aes-256-gcm';
 
-if (!ENCRYPTION_KEY) {
-  throw new Error('ENCRYPTION_KEY environment variable is not set');
-}
+function getEncryptionKey(): Buffer {
+  const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
+  
+  if (!ENCRYPTION_KEY) {
+    throw new Error('ENCRYPTION_KEY environment variable is not set');
+  }
 
-// Validate encryption key is 64 hex characters (32 bytes)
-if (ENCRYPTION_KEY.length !== 64) {
-  throw new Error('ENCRYPTION_KEY must be 64 hex characters (32 bytes)');
-}
+  // Validate encryption key is 64 hex characters (32 bytes)
+  if (ENCRYPTION_KEY.length !== 64) {
+    throw new Error('ENCRYPTION_KEY must be 64 hex characters (32 bytes)');
+  }
 
-const KEY_BUFFER = Buffer.from(ENCRYPTION_KEY, 'hex');
+  return Buffer.from(ENCRYPTION_KEY, 'hex');
+}
 
 export function encrypt(text: string): string {
   if (!text) {
     throw new Error('Cannot encrypt empty string');
   }
+
+  const KEY_BUFFER = getEncryptionKey();
 
   // Generate random initialization vector
   const iv = crypto.randomBytes(16);
@@ -44,6 +49,8 @@ export function decrypt(encryptedText: string): string {
   if (!encryptedText) {
     throw new Error('Cannot decrypt empty string');
   }
+
+  const KEY_BUFFER = getEncryptionKey();
 
   // Split components
   const parts = encryptedText.split(':');

@@ -2,22 +2,20 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy package files
+# Copy worker package.json
 COPY worker/package*.json ./
-COPY package*.json ../
 
 # Install dependencies
 RUN npm ci --production
 
 # Copy worker code
-COPY worker/ ./worker/
-COPY lib/ ../lib/
+COPY worker/ ./
 
 # Set environment
 ENV NODE_ENV=production
 
 # Run worker
-CMD ["node", "worker/index.js"]
+CMD ["node", "index.js"]
 
 
 
