@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 import { encrypt } from '@/lib/encryption'
 import { KalshiAPI } from '@/lib/kalshi/api'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: Request) {
   try {
     const supabase = await createClient()

@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 import { KalshiAPI } from '@/lib/kalshi/api'
 import { getUserKalshiCredentials } from '@/lib/positions/get-user-credentials'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     const supabase = await createClient()

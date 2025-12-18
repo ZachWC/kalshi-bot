@@ -4,6 +4,8 @@ import { KalshiAPI } from '@/lib/kalshi/api'
 import { getUserKalshiCredentials } from '@/lib/positions/get-user-credentials'
 import { validatePosition } from '@/lib/positions/validate-position'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     const supabase = await createClient()
